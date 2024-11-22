@@ -98,13 +98,6 @@ function removeVoxel(x, y, z) {
         }
     }
 }
-function changeColor() {
-    colorIndex = (colorIndex + 1) % colors.length; 
-    currentColor = colors[colorIndex]; 
-    console.log("Cor atual:", currentColor); 
-    cube.material.color.set(currentColor);
-    
-}
 function keyboardUpdate() {
 
     keyboard.update();
@@ -116,7 +109,17 @@ function keyboardUpdate() {
     if (keyboard.down("S") && cube.position.y > 1) cube.translateY(-1);
     if (keyboard.down("Q")) addVoxel(cube.position.x, cube.position.y, cube.position.z);
     if (keyboard.down("E")) removeVoxel(cube.position.x, cube.position.y, cube.position.z); 
-    if (keyboard.down("C")) changeColor();
+
+    if (keyboard.down(".")) {
+        colorIndex = (colorIndex + 1) % colors.length; // Próxima cor
+        currentColor = colors[colorIndex];
+        cube.material.color.set(currentColor);
+    }
+    if (keyboard.down(",")) {
+        colorIndex = (colorIndex - 1 + colors.length) % colors.length; // Cor anterior
+        currentColor = colors[colorIndex];
+        cube.material.color.set(currentColor); 
+    }
 }
 //Apresentar informacoes
 function showInformation() {
@@ -125,9 +128,10 @@ function showInformation() {
     controls.addParagraph();
     controls.add("Press arrow keys to move the frame in X and Z axis");
     controls.add("Press WS to move on the Y axis");
-    controls.add("Press C to change colors")
     controls.add("Press Q to Add a voxel")
     controls.add("Press E to Remove a voxel")
+    controls.add("Press . to next color")
+    controls.add("Press . to previous color")
     controls.show();
 }
 

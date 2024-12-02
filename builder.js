@@ -10,6 +10,7 @@ import {
     onWindowResize,
     createGroundPlaneXZ
 } from "../libs/util/util.js";
+import GUI from '../libs/util/dat.gui.module.js';
 
 let scene, renderer, camera, material, light, orbit; // Initial variables 
 scene = new THREE.Scene();    // Create main scene
@@ -29,6 +30,76 @@ let currentColor = "LimeGreen"; // Cor inicial (verde)
 let colors = ["LimeGreen", "SandyBrown", "BurlyWood", "ForestGreen", "SpringGreen"];
 let colorIndex = 0;
 
+// Criar elementos de interface
+function buildInterface() {
+    var controls = new function () {
+        this.fileName = 'voxels.txt';
+
+        this.saveVoxels = function () {
+            saveVoxels(this.fileName);
+        };
+
+        this.loadVoxels = function () {
+            loadVoxels(this.fileName);
+        };
+    };
+
+    // GUI interface
+    var gui = new GUI();
+    gui.add(controls, 'fileName').name("Nome do Arquivo");
+    gui.add(controls, 'saveVoxels').name("Salvar");
+    gui.add(controls, 'loadVoxels').name("Carregar");
+}
+
+// Função para salvar o estado dos voxels
+function saveVoxels(fileName) {
+    let voxelData = '';
+
+    voxels.forEach(voxel => {
+        const { x, y, z } = voxel.position;
+        const color = voxel.material.color.getHexString(); // Salva a cor como string hexadecimal
+        voxelData += `${x},${y},${z},#${color}\n`; // Adiciona o prefixo '#' para a cor
+    });
+
+    const blob = new Blob([voxelData], { type: 'text/plain' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = fileName || 'voxels.txt';
+    link.click();
+}
+
+// Função para carregar o estado dos voxels
+function loadVoxels(fileName) {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.onchange = e => {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        reader.onload = event => {
+            const lines = event.target.result.split('\n');
+            lines.forEach(line => {
+                if (line.trim() !== '') {
+                    const [x, y, z, color] = line.split(',');
+                    const geometry = new THREE.BoxGeometry(1, 1, 1);
+                    const voxelMaterial = new THREE.MeshStandardMaterial({
+                        color: color.trim(), // Aplica a cor diretamente como string hexadecimal
+                        transparent: true,
+                        opacity: 0.98,
+                        roughness: 0.5,
+                        metalness: 0.1
+                    });
+                    const voxel = new THREE.Mesh(geometry, voxelMaterial);
+                    voxel.position.set(parseFloat(x), parseFloat(y), parseFloat(z));
+                    scene.add(voxel);
+                    voxels.push(voxel);
+                }
+            });
+        };
+        reader.readAsText(file);
+    };
+    input.click();
+}
+
 showInformation();
 var keyboard = new KeyboardState();
 
@@ -37,15 +108,31 @@ var keyboard = new KeyboardState();
 // scene.add(axesHelper);
 
 // create the ground plane
-let plane = createGroundPlaneXZ(10, 10)
+let plane = createGroundPlaneXZ(11, 11);
 scene.add(plane);
+
+// Adicionar linhas azuis no centro do plano
+const materialLine = new THREE.LineBasicMaterial({ color: 0x0000ff });
+const points = [];
+
+// Linha horizontal
+points.push(new THREE.Vector3(-5.5, 0.01, 0));
+points.push(new THREE.Vector3(5.5, 0.01, 0));
+
+// Linha vertical
+points.push(new THREE.Vector3(0, 0.01, -5.5));
+points.push(new THREE.Vector3(0, 0.01, 5.5));
+
+const geometryLine = new THREE.BufferGeometry().setFromPoints(points);
+const line = new THREE.LineSegments(geometryLine, materialLine);
+scene.add(line);
 
 // create a cube
 var cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-const wireframeMaterial = new THREE.MeshBasicMaterial({ color: "red", wireframe: true });
+const wireframeMaterial = new THREE.MeshBasicMaterial({ color: "LimeGreen", wireframe: true });
 var cube = new THREE.Mesh(cubeGeometry, wireframeMaterial);
 // position the cube
-cube.position.set(0.5, 0.5, 0.5);
+cube.position.set(0, 0.5, 0);
 // add the cube to the scene
 scene.add(cube);
 function createGrid(size) {
@@ -53,7 +140,7 @@ function createGrid(size) {
     scene.add(gridHelper);
 }
 
-createGrid(10);
+createGrid(11);
 render();
 
 //criar um voxel
@@ -101,12 +188,12 @@ function removeVoxel(x, y, z) {
 function keyboardUpdate() {
 
     keyboard.update();
-    if (keyboard.down("left") && cube.position.x > -4) cube.translateX(-1);
-    if (keyboard.down("right") && cube.position.x < 4) cube.translateX(1);
-    if (keyboard.down("down") && cube.position.z < 4) cube.translateZ(1);
-    if (keyboard.down("up") && cube.position.z > -4) cube.translateZ(-1);
-    if (keyboard.down("W") && cube.position.y < 10) cube.translateY(1);
-    if (keyboard.down("S") && cube.position.y > 1) cube.translateY(-1);
+    if (keyboard.down("left") && cube.position.x > -5) cube.translateX(-1);
+    if (keyboard.down("right") && cube.position.x < 5) cube.translateX(1);
+    if (keyboard.down("down") && cube.position.z < 5) cube.translateZ(1);
+    if (keyboard.down("up") && cube.position.z > -5) cube.translateZ(-1);
+    if (keyboard.down("pageup") && cube.position.y < 11) cube.translateY(1);
+    if (keyboard.down("pagedown") && cube.position.y > 1) cube.translateY(-1);
     if (keyboard.down("Q")) addVoxel(cube.position.x, cube.position.y, cube.position.z);
     if (keyboard.down("E")) removeVoxel(cube.position.x, cube.position.y, cube.position.z); 
 
@@ -127,11 +214,13 @@ function showInformation() {
     controls.add("Builder");
     controls.addParagraph();
     controls.add("Press arrow keys to move the frame in X and Z axis");
-    controls.add("Press WS to move on the Y axis");
-    controls.add("Press Q to Add a voxel")
-    controls.add("Press E to Remove a voxel")
-    controls.add("Press . to next color")
-    controls.add("Press . to previous color")
+    controls.add("Press PageUp/PageDown to move on the Y axis");
+    controls.add("Press Q to Add a voxel");
+    controls.add("Press E to Remove a voxel");
+    controls.add("Press . to next color");
+    controls.add("Press , to previous color");
+    controls.addParagraph();
+    controls.add("Nome do arquivo:");
     controls.show();
 }
 
@@ -140,3 +229,5 @@ function render() {
     keyboardUpdate();
     renderer.render(scene, camera) // Render scene
 }
+
+buildInterface();

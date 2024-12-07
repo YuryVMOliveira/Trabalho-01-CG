@@ -191,6 +191,12 @@ function removeVoxel(x, y, z) {
 
 function keyboardUpdate() {
     keyboard.update();
+
+    // Verifica se a caixa de texto está focada
+    if (document.activeElement.tagName === 'INPUT') {
+        return; // Se estiver focada, não processa as teclas
+    }
+
     if (keyboard.down("left") && cube.position.x > -5) cube.translateX(-1);
     if (keyboard.down("right") && cube.position.x < 5) cube.translateX(1);
     if (keyboard.down("down") && cube.position.z < 5) cube.translateZ(1);

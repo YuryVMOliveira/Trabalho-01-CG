@@ -16,7 +16,7 @@ import GUI from '../libs/util/dat.gui.module.js';
 let scene, renderer, camera, material, light, orbit; // Initial variables 
 scene = new THREE.Scene();    // Create main scene
 renderer = initRenderer();    // Init a basic renderer
-camera = initCamera(new THREE.Vector3(0, 10, 10)); // Init camera in this position
+camera = initCamera(new THREE.Vector3(0, 7, 10)); // Init camera in this position
 material = setDefaultMaterial(); // create a basic material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 orbit = new OrbitControls(camera, renderer.domElement); // Enable mouse rotation, pan, zoom etc.
@@ -27,8 +27,8 @@ window.addEventListener('resize', function () { onWindowResize(camera, renderer)
 
 //define cores e cria vetor dos voxels
 let voxels = [];
-let currentColor = "LimeGreen"; // Cor inicial (verde)
 let colors = ["LimeGreen", "SandyBrown", "BurlyWood", "ForestGreen", "SaddleBrown"];
+let currentColor = colors[0]; // Cor inicial (verde)
 let colorIndex = 0;
 
 // Criar elementos de interface
@@ -70,7 +70,7 @@ function saveVoxels(fileName) {
 }
 
 // Função para carregar o estado dos voxels
-function loadVoxels(fileName) {
+function loadVoxels() {
     const input = document.createElement('input');
     input.type = 'file';
     input.onchange = e => {
@@ -238,7 +238,7 @@ function keyboardUpdate() {
 
 // Função para adicionar uma esfera com a cor atual do cubo
 function addSphere(x, y, z) {
-    const geometry = new THREE.SphereGeometry(0.1, 32, 32); // Esfera com diâmetro 0.2
+    const geometry = new THREE.SphereGeometry(0.08, 32, 32); // Esfera com diâmetro 0.16
     const material = new THREE.MeshBasicMaterial({ color: currentColor }); // Usa a cor atual do cubo
     const sphere = new THREE.Mesh(geometry, material);
     sphere.position.set(x, y, z);

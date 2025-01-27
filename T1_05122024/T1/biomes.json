@@ -1,0 +1,62 @@
+{
+    "forest": {
+        "heightMultiplier": 1.2,
+        "roughness": 0.7,
+        "treeDensity": 0.4,
+        "blockProbabilities": {
+            "surface": {
+                "grass": 0.8,
+                "dirt": 0.2
+            },
+            "subsurface": {
+                "dirt": 0.7,
+                "stone": 0.3
+            }
+        }
+    },
+    "mountain": {
+        "heightMultiplier": 2.0,
+        "roughness": 0.9,
+        "treeDensity": 0.1,
+        "blockProbabilities": {
+            "surface": {
+                "stone": 0.7,
+                "snow": 0.3
+            },
+            "subsurface": {
+                "stone": 0.9,
+                "dirt": 0.1
+            }
+        }
+    },
+    "beach": {
+        "heightMultiplier": 0.3,
+        "roughness": 0.2,
+        "treeDensity": 0.05,
+        "blockProbabilities": {
+            "surface": {
+                "sand": 0.9,
+                "dirt": 0.1
+            },
+            "subsurface": {
+                "sand": 0.6,
+                "stone": 0.4
+            }
+        }
+    },
+    "plains": {
+        "heightMultiplier": 0.8,
+        "roughness": 0.4,
+        "treeDensity": 0.15,
+        "blockProbabilities": {
+            "surface": {
+                "grass": 0.9,
+                "dirt": 0.1
+            },
+            "subsurface": {
+                "dirt": 0.8,
+                "stone": 0.2
+            }
+        }
+    }
+} 

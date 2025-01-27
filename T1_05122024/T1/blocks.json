@@ -1,0 +1,32 @@
+{
+    "air": {
+        "id": 0,
+        "color": "#000000",
+        "transparent": true
+    },
+    "grass": {
+        "id": 1,
+        "color": "#228B22",
+        "transparent": false
+    },
+    "dirt": {
+        "id": 2,
+        "color": "#8B4513",
+        "transparent": false
+    },
+    "stone": {
+        "id": 3,
+        "color": "#808080",
+        "transparent": false
+    },
+    "sand": {
+        "id": 4,
+        "color": "#F4A460",
+        "transparent": false
+    },
+    "water": {
+        "id": 5,
+        "color": "#0077BE",
+        "transparent": true
+    }
+} 

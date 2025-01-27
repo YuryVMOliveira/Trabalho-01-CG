@@ -1,0 +1,73 @@
+
+
+### Visão Geral
+Este é um gerador de terreno 3D que utiliza uma combinação de algoritmos para criar um mundo com terreno variado e árvores. 
+
+### Principais Componentes
+
+1. **Geração do Terreno Base**
+- Utiliza o algoritmo Diamond-Square para gerar o heightmap (mapa de altura) base
+- O mapa tem um tamanho fixo de 200x200 unidades
+- As alturas variam entre 0.5 (minHeight) e 19.5 (maxHeight)
+- O nível da água é definido em 3 unidades
+
+2. **Detalhamento do Terreno**
+- Usa Ruído de Perlin para adicionar detalhes extras ao terreno
+- O ruído é implementado com múltiplas oitavas para criar mais variação
+- Os gradientes são gerados aleatoriamente no início
+
+3. **Composição do Terreno**
+O terreno é composto por diferentes tipos de blocos:
+- Grama: Na superfície quando a altura é menor que 15
+- Pedra: Na superfície quando a altura é maior que 15
+- Terra: 3 blocos abaixo da superfície
+- Pedra: Todo o resto abaixo
+
+4. **Geração de Árvores**
+- São geradas entre 20 e 100 árvores
+- As árvores só são colocadas em blocos de grama (altura <= 15)
+- Existem 4 templates diferentes de árvores ('arvore.txt', 'arvore_1.txt', 'arvore_2.txt', 'arvore_3.txt')
+- A posição das árvores é randomizada entre as posições válidas
+
+### Processo de Geração
+
+1. **Inicialização**
+```javascript
+- Carrega os blocos de um arquivo blocks.json
+- Gera os gradientes para o ruído de Perlin
+- Inicializa o heightmap usando Diamond-Square
+```
+
+2. **Geração do Terreno**
+```javascript
+- Para cada posição (x,z):
+  - Calcula a altura usando o heightmap + ruído de Perlin
+  - Gera os blocos do subsolo até a superfície
+  - Define o tipo de bloco baseado na profundidade
+```
+
+3. **Geração das Árvores**
+```javascript
+- Identifica todas as posições válidas (blocos de grama)
+- Embaralha as posições aleatoriamente
+- Seleciona um número aleatório de posições
+- Para cada posição:
+  - Escolhe um template de árvore aleatório
+  - Carrega e posiciona a árvore
+```
+
+### Características Especiais
+
+1. **Persistência**
+- O heightmap é gerado uma única vez e reutilizado
+- Os templates de árvores são cacheados após o primeiro carregamento
+
+2. **Suavização**
+- O algoritmo Diamond-Square usa um fator de rugosidade (roughness) de 0.7
+- O ruído de Perlin adiciona variações suaves ao terreno
+
+3. **Normalização**
+- Todas as alturas são normalizadas para ficarem dentro dos limites definidos
+- As posições são ajustadas para centralizarem o mapa
+
+Este sistema cria um mundo procedural com terreno variado e vegetação, onde cada geração será única devido aos elementos aleatórios, mas mantendo uma coerência visual graças aos algoritmos utilizados.
